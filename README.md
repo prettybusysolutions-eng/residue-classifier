@@ -45,7 +45,7 @@ Pro is intended to include:
 - clearer promote / ignore / archive decisions
 
 Stripe Payment Link:
-- [Stripe Payment Link Placeholder]
+- https://buy.stripe.com/7sY00idgkcoresgbkG0kE07
 
 ## Support
 If the free version helped you separate signal from junk, good. If you want the deeper cleanup and governance layer, that is what the Pro version is for.
