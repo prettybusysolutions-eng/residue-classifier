@@ -33,8 +33,19 @@ That writes a local `residue-classifier-report.json` in the current working dire
 - no automatic cleanup
 - report generation only
 
-## Support / Upgrade
-- Tip Jar: https://gumroad.com/l/claw-foundry-tip-jar
-- Pro Upgrade: https://gumroad.com/l/residue-classifier-pro
+## Upgrade to Pro
+The free version gives you a safe classification pass.
+The Pro version is for when you want to save 5+ hours of cleanup confusion, reduce repo risk, and get a clearer path to a clean workspace.
 
-If it helps you separate signal from junk, good. If you want the whole workspace governance layer cleaned up properly, that is the upgrade path.
+Pro is intended to include:
+- richer classification rules
+- confidence-scored recommendations
+- backup-first cleanup planning
+- thin-root cleanup order
+- clearer promote / ignore / archive decisions
+
+Stripe Payment Link:
+- [Stripe Payment Link Placeholder]
+
+## Support
+If the free version helped you separate signal from junk, good. If you want the deeper cleanup and governance layer, that is what the Pro version is for.
