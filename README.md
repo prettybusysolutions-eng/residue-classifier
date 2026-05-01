@@ -1,8 +1,17 @@
 # Residue Classifier
 
-Residue Classifier is a small local utility for sorting workspace sprawl into buckets like canonical, runtime, local-only, or review-needed before cleanup.
+Forensic categorization and hygiene protocols for structured data cleanup.
 
-I wrote it because once a workspace gets busy enough, it becomes way too easy to lose track of what is real, what is temporary, and what should never have been in the root in the first place.
+Residue Classifier is part of the operator kit for separating canonical assets, transient residue, runtime artifacts, and review-needed material before cleanup or promotion decisions are made.
+
+## Role in the system
+Cleanup without classification creates risk.
+This layer exists to preserve signal while reducing sprawl.
+
+## Standard
+Classify first.
+Remove carefully.
+Protect what matters.
 
 ## What it does
 - scans a workspace tree
