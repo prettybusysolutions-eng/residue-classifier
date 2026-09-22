@@ -4,6 +4,10 @@ Forensic categorization and hygiene protocols for structured data cleanup.
 
 Residue Classifier is part of the operator kit for separating canonical assets, transient residue, runtime artifacts, and review-needed material before cleanup or promotion decisions are made.
 
+**Start here:** [run the two-minute quickstart](QUICKSTART.md).
+
+Release status and gates: [RELEASING.md](RELEASING.md).
+
 ## Role in the system
 Cleanup without classification creates risk.
 This layer exists to preserve signal while reducing sprawl.
