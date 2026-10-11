@@ -1,0 +1,66 @@
+name: Publish tested CLI pilot
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/cli-release.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: residue-cli-release
+  cancel-in-progress: false
+jobs:
+  publish-cli:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
+      - run: python -m pip install build && python -m build
+      - name: Verify installed CLI contract
+        run: |
+          python -m venv "$RUNNER_TEMP/cli"
+          "$RUNNER_TEMP/cli/bin/pip" install dist/*.whl
+          "$RUNNER_TEMP/cli/bin/residue-classifier" --version
+          mkdir "$RUNNER_TEMP/fixture"
+          printf 'fixture\n' > "$RUNNER_TEMP/fixture/STATE.md"
+          "$RUNNER_TEMP/cli/bin/residue-classifier" --workspace "$RUNNER_TEMP/fixture" --stdout > /tmp/cli-report.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/cli-report.json'))
+          assert r['schemaVersion']==1 and r['sampled']==1 and not r['truncated']
+          assert r['rows']==[{'path':'STATE.md','class':'canonical'}]
+          PY
+      - name: Record exact source provenance
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,pathlib,tomllib
+          dist=pathlib.Path('dist')
+          version=tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version']
+          artifacts={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(dist.iterdir()) if p.is_file()}
+          (dist/'SHA256SUMS').write_text(''.join(f'{digest}  {name}\n' for name,digest in artifacts.items()))
+          (dist/'provenance.json').write_text(json.dumps({'version':version,'source_commit':os.environ['GITHUB_SHA'],'workflow_run':os.environ['GITHUB_RUN_ID'],'artifacts':artifacts,'signature':'unsigned workflow metadata'},indent=2)+'\n')
+          pathlib.Path('/tmp/tag').write_text('v'+version)
+          PY
+      - name: Publish exact-commit prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$(cat /tmp/tag)"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Refusing to replace an existing release.'
+            exit 1
+          fi
+          cat > /tmp/notes.md <<EOF
+          Versioned non-destructive filename-heuristic CLI from $GITHUB_SHA.
+          Source tests and installed-wheel JSON contract pass before publication.
+          Real-workspace accuracy, secret detection and forensic snapshot guarantees are not established. Classification never authorizes deletion.
+          EOF
+          gh release create "$tag" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Residue Classifier $tag CLI pilot" --prerelease --notes-file /tmp/notes.md

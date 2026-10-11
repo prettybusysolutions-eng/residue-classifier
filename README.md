@@ -62,3 +62,21 @@ Stripe Payment Link:
 
 ## Support
 If the free version helped you separate signal from junk, good. If you want the deeper cleanup and governance layer, that is what the Pro version is for.
+
+## Versioned CLI and output contract
+
+Install with `python -m pip install .`, then run `residue-classifier --version`
+or `residue-classifier --workspace /path --stdout`. Version 0.1.0 returns the
+complete schemaVersion 1 JSON report on stdout. Without `--stdout`, it also
+writes a report; `--output` selects its location. `--max-files` defaults to 500.
+`truncated=true` explicitly marks incomplete coverage. Exit 0 means scan completion,
+not that files are safe to delete; exit 1 reports `SCAN_FAILED` for scan/I/O errors.
+Git internals, symlinks and the output report are excluded. A write error does not
+produce a success result. Reruns do not classify the previous output as evidence.
+
+Eight synthetic labeled filename cases pass, including a misleading backup
+name and the `memory/errors.md.bak` boundary. This is rule conformance, not measured
+precision or recall on real workspaces. The classifier never reads file contents;
+it cannot identify secrets, malicious files, redundant data or actual canonical
+ownership. Unknown files remain review-needed. Files may change during a scan;
+this is not a forensic snapshot or deletion authorization.
